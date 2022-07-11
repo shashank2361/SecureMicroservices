@@ -9,6 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Movies.Client.ApiServices;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.Tokens;
+using IdentityModel;
+using Microsoft.Net.Http.Headers;
 
 namespace Movies.Client
 {
@@ -26,9 +32,42 @@ namespace Movies.Client
         {
             services.AddControllersWithViews();
             services.AddScoped<IMovieApiService, MovieApiService>();
+            services.AddHttpContextAccessor();
+
+            //  services.AddTransient<AuthenticationDelegatingHandler>();
+
+            services.AddHttpClient("MovieAPIClient", client =>
+           {
+               client.BaseAddress = new Uri("https://localhost:5001"); // API GATEWAY URL
+               client.DefaultRequestHeaders.Clear();
+
+               client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+           });
+                //.AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
 
-               services.AddHttpContextAccessor();
+            services.AddAuthentication(options =>
+               {
+                   options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                   options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+               })
+               .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+               .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+               {
+                   options.Authority = "https://localhost:5005";
+
+                   options.ClientId = "movies_mvc_client";
+                   options.ClientSecret = "secret";
+                   options.ResponseType = "code";
+
+                   options.Scope.Add("openid");
+                   options.Scope.Add("profile");
+                   
+                   options.SaveTokens = true;
+                   options.GetClaimsFromUserInfoEndpoint = true;
+
+                   
+               });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +87,7 @@ namespace Movies.Client
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

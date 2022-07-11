@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
- using Movies.Client.ApiServices;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Movies.Client.ApiServices;
  using Movies.Client.Models;
 
 namespace Movies.Client.Controllers
 {
+
     public class MoviesController : Controller
     {
         private readonly IMovieApiService _movieApiService;
@@ -19,10 +26,38 @@ namespace Movies.Client.Controllers
         }
 
         // GET: Movies
+            [Authorize]
         public async Task<IActionResult> Index()
         {
-           // await LogTokenAndClaims();
-            return View(await _movieApiService.GetMovies());
+            await LogTokenAndClaims();
+            List<Movie> movies = new List<Movie>()
+            {
+                new Movie
+            {
+                Id = 1,
+                Genre = "Drama",
+                Title = "The Shawshank Redemption",
+                Rating = "9.3",
+                ImageUrl = "images/src",
+                ReleaseDate = new DateTime(1994, 5, 5),
+                Owner = "alice"
+            }
+            };
+            return View(movies);
+            //(await _movieApiService.GetMovies()
+        }
+
+        public async Task LogTokenAndClaims()
+        {
+            var identityToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+                Debug.WriteLine($"Identity token: {identityToken}");
+            foreach (var claim in User.Claims)
+            {
+                Debug.WriteLine($"Claim type {claim.Type} - Claim value : {claim.Value}");
+
+            }
+
+
         }
 
         // GET: Movies/Details/5
@@ -163,5 +198,12 @@ namespace Movies.Client.Controllers
 
             // return _context.Movie.Any(e => e.Id == id);
         }
+
+        public async Task Logout()
+        {
+            await HttpContext.SignOutAsync( CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync( OpenIdConnectDefaults.AuthenticationScheme);
+        }
+
     }
 }
