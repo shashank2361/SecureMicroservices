@@ -30,19 +30,7 @@ namespace Movies.Client.Controllers
         public async Task<IActionResult> Index()
         {
             await LogTokenAndClaims();
-            List<Movie> movies = new List<Movie>()
-            {
-                new Movie
-            {
-                Id = 1,
-                Genre = "Drama",
-                Title = "The Shawshank Redemption",
-                Rating = "9.3",
-                ImageUrl = "images/src",
-                ReleaseDate = new DateTime(1994, 5, 5),
-                Owner = "alice"
-            }
-            };
+            var movies = await _movieApiService.GetMovies();
             return View(movies);
             //(await _movieApiService.GetMovies()
         }
@@ -63,20 +51,19 @@ namespace Movies.Client.Controllers
         // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            return View();
-            //if (id == null)
-            //{
-            //    return NotFound();
-            //}
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-            //var movie = await _movieApiService.GetMovies().
-            //    .FirstOrDefaultAsync(m => m.Id == id);
-            //if (movie == null)
-            //{
-            //    return NotFound();
-            //}
+            var movies= await _movieApiService.GetMovies();
+             var movie = movies?.FirstOrDefault(m => m.Id == id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
 
-            //return View(movie);
+             return View(movie);
         }
 
         // GET: Movies/Create
@@ -106,19 +93,19 @@ namespace Movies.Client.Controllers
         // GET: Movies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            return View();
 
-            //if (id == null)
-            //{
-            //    return NotFound();
-            //}
 
-            //var movie = await _context.Movie.FindAsync(id);
-            //if (movie == null)
-            //{
-            //    return NotFound();
-            //}
-            //return View(movie);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var movie = await _movieApiService.GetMovie(id.ToString());
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            return View(movie);
         }
 
         // POST: Movies/Edit/5

@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using IdentityModel;
 using Microsoft.Net.Http.Headers;
+using Movies.Client.HttpHandler;
+using IdentityModel.Client;
 
 namespace Movies.Client
 {
@@ -34,7 +36,7 @@ namespace Movies.Client
             services.AddScoped<IMovieApiService, MovieApiService>();
             services.AddHttpContextAccessor();
 
-            //  services.AddTransient<AuthenticationDelegatingHandler>();
+            services.AddTransient<AuthenticationDelegatingHandler>();
 
             services.AddHttpClient("MovieAPIClient", client =>
            {
@@ -42,8 +44,25 @@ namespace Movies.Client
                client.DefaultRequestHeaders.Clear();
 
                client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+           }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+
+            // 2 create an HTTPClient used for accessing the IS4
+            services.AddHttpClient("IDPClient", client =>
+           {
+               client.BaseAddress = new Uri("https://localhost:5005"); // IS4
+               client.DefaultRequestHeaders.Clear();
+               client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
            });
-                //.AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+
+
+            services.AddSingleton(new ClientCredentialsTokenRequest
+            {
+                Address = "https://localhost:5005/connect/token",
+                ClientId = "movieClient",
+                ClientSecret = "secret",
+                Scope = "movieAPI"
+            });
+
 
 
             services.AddAuthentication(options =>

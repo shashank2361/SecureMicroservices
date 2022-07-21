@@ -27,54 +27,35 @@ namespace Movies.Client.ApiServices
         {
 
             ////////////////////////
-            // WAY 1 :
+            // WAY 1 : Get token from IS4 using Addresxz clinet id client secret and then send request to protected API 
+            //
 
-            var httpClient = _httpClientFactory.CreateClient("MovieAPIClient");
 
-            var request = new HttpRequestMessage(
-                HttpMethod.Get,
-                "/movies");
-
-            var response = await httpClient.SendAsync(
-                request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-
-            response.EnsureSuccessStatusCode();
-
-            var content = await response.Content.ReadAsStringAsync();
-            var movieList = JsonConvert.DeserializeObject<List<Movie>>(content);
-            return movieList;
-
-            ////////////////////////// //////////////////////// ////////////////////////
-            //// WAY 2 :
-
-            //// 1. "retrieve" our api credentials. This must be registered on Identity Server!
             //var apiClientCredentials = new ClientCredentialsTokenRequest
             //{
             //    Address = "https://localhost:5005/connect/token",
-
             //    ClientId = "movieClient",
             //    ClientSecret = "secret",
-
-            //    // This is the scope our Protected API requires. 
             //    Scope = "movieAPI"
             //};
 
             //// creates a new HttpClient to talk to our IdentityServer (localhost:5005)
             //var client = new HttpClient();
 
-            //// just checks if we can reach the Discovery document. Not 100% needed but..
+            //// just checks if we can reach the Discovery document.  
             //var disco = await client.GetDiscoveryDocumentAsync("https://localhost:5005");
             //if (disco.IsError)
             //{
             //    return null; // throw 500 error
             //}
+            ////Get token from IS4 
 
-            //// 2. Authenticates and get an access token from Identity Server
-            //var tokenResponse = await client.RequestClientCredentialsTokenAsync(apiClientCredentials);            
+            //var tokenResponse = await client.RequestClientCredentialsTokenAsync(apiClientCredentials);
             //if (tokenResponse.IsError)
             //{
             //    return null;
             //}
+
 
             //// Another HttpClient for talking now with our Protected API
             //var apiClient = new HttpClient();
@@ -92,12 +73,48 @@ namespace Movies.Client.ApiServices
             //return movieList;
 
 
+          //  Way 2 : Better Way; Token is handeled using delegate interceptor
+
+           var httpClient = _httpClientFactory.CreateClient("MovieAPIClient");
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                "/api/movies");
+
+            var response = await httpClient.SendAsync(
+                request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var movieList = JsonConvert.DeserializeObject<List<Movie>>(content);
+            return movieList;
+
+            ////////////////////////// //////////////////////// ////////////////////////
+
+
+
+
+
         }
 
-        public Task<Movie> GetMovie(string id)
+        public async Task<Movie> GetMovie(string id)
         {
-            throw new NotImplementedException();
-        }
+            var httpClient = _httpClientFactory.CreateClient("MovieAPIClient");
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/api/movies/{id}");
+
+            var response = await httpClient.SendAsync( request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var movie  = JsonConvert.DeserializeObject<Movie>(content);
+            return movie ;
+            
+         }
 
         public Task<Movie> CreateMovie(Movie movie)
         {
