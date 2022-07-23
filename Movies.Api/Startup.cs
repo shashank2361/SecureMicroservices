@@ -53,9 +53,12 @@ namespace Movies.Api
                         };
                     });
 
+            // Claim basd Authorization
             services.AddAuthorization(options =>
            {
                options.AddPolicy("ClientIdPolicy", policy => policy.RequireClaim("client_id", "movieClient", "movies_mvc_client"));
+                // movieClient is used when authorizing using Authorization Code
+                // movies_mvc_client is used when authorizing using Hybrid Flow
            });
 
 

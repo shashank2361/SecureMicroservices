@@ -15,21 +15,22 @@ namespace IdentityServer
         public static IEnumerable<Client> Clients =>
               new Client[]
               {
-                   new Client
-                   { //API
-                        ClientId = "movieClient",
-                        AllowedGrantTypes = GrantTypes.ClientCredentials,
-                        ClientSecrets =
-                        {
-                            new Secret("secret".Sha256())
-                        },
-                        AllowedScopes = { "movieAPI" }
-                   },
+                   //new Client
+                   //{ //API
+                   //     ClientId = "movieClient",
+                   //     AllowedGrantTypes = GrantTypes.ClientCredentials,
+                   //     ClientSecrets =
+                   //     {
+                   //         new Secret("secret".Sha256())
+                   //     },
+                   //     AllowedScopes = { "movieAPI" }
+                   //},
                    new Client
                    { //MVC project
                        ClientId = "movies_mvc_client",
                        ClientName = "Movies MVC Web App",
-                       AllowedGrantTypes = GrantTypes.Code,   // user ID ad password
+                      // AllowedGrantTypes = GrantTypes.Code,   // user ID ad password
+                       AllowedGrantTypes = GrantTypes.Hybrid,   // user ID ad password
                        RequirePkce = false,
                        AllowRememberConsent = false,
                        RedirectUris = new List<string>()
@@ -50,7 +51,7 @@ namespace IdentityServer
                            IdentityServerConstants.StandardScopes.Profile,
                           // IdentityServerConstants.StandardScopes.Address,
                           // IdentityServerConstants.StandardScopes.Email,
-                          // "movieAPI",
+                           "movieAPI",     // Added For Hybrid Flow
                            //"roles"
                        }
                    }

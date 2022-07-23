@@ -34,7 +34,6 @@ namespace Movies.Client
         {
             services.AddControllersWithViews();
             services.AddScoped<IMovieApiService, MovieApiService>();
-            services.AddHttpContextAccessor();
 
             services.AddTransient<AuthenticationDelegatingHandler>();
 
@@ -55,13 +54,16 @@ namespace Movies.Client
            });
 
 
-            services.AddSingleton(new ClientCredentialsTokenRequest
-            {
-                Address = "https://localhost:5005/connect/token",
-                ClientId = "movieClient",
-                ClientSecret = "secret",
-                Scope = "movieAPI"
-            });
+            services.AddHttpContextAccessor();
+
+            // Removed this because I am using the Hybrid flow now and using HttpContexe Accessor to retrieve the existing token
+            //services.AddSingleton(new ClientCredentialsTokenRequest
+            //{
+            //    Address = "https://localhost:5005/connect/token",
+            //    ClientId = "movieClient",
+            //    ClientSecret = "secret",
+            //    Scope = "movieAPI"
+            //});
 
 
 
@@ -77,10 +79,12 @@ namespace Movies.Client
 
                    options.ClientId = "movies_mvc_client";
                    options.ClientSecret = "secret";
-                   options.ResponseType = "code";
+                  // options.ResponseType = "code";
+                    options.ResponseType = "code id_token";   // added for Hybrid Flow
 
                    options.Scope.Add("openid");
                    options.Scope.Add("profile");
+                   options.Scope.Add("movieAPI");       // added for Hybrid Flow
                    
                    options.SaveTokens = true;
                    options.GetClaimsFromUserInfoEndpoint = true;
