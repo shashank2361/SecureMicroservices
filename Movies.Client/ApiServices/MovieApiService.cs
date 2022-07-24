@@ -135,9 +135,9 @@ namespace Movies.Client.ApiServices
         {           
             var idpClient = _httpClientFactory.CreateClient("IDPClient");
 
-            var metaDataResponse = await idpClient.GetDiscoveryDocumentAsync();
+            var metaDataDiscoveryDocResponse = await idpClient.GetDiscoveryDocumentAsync();
 
-            if (metaDataResponse.IsError)
+            if (metaDataDiscoveryDocResponse.IsError)
             {
                 throw new HttpRequestException("Something went wrong while requesting the access token");
             }
@@ -148,7 +148,7 @@ namespace Movies.Client.ApiServices
             var userInfoResponse = await idpClient.GetUserInfoAsync(
                new UserInfoRequest
                {
-                   Address = metaDataResponse.UserInfoEndpoint,
+                   Address = metaDataDiscoveryDocResponse.UserInfoEndpoint,
                    Token = accessToken
                });
 

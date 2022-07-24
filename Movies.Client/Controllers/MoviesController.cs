@@ -91,6 +91,8 @@ namespace Movies.Client.Controllers
         }
 
         // GET: Movies/Edit/5
+        [Authorize(Roles = "admin")]
+
         public async Task<IActionResult> Edit(int? id)
         {
 
@@ -185,6 +187,23 @@ namespace Movies.Client.Controllers
 
             // return _context.Movie.Any(e => e.Id == id);
         }
+
+        [Authorize(Roles ="admin")]
+        public async Task<IActionResult> OnlyAdmin()
+        {
+      
+            var userInfo = await _movieApiService.GetUserInfo();
+            return View(userInfo);
+
+
+
+        }
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
 
         public async Task Logout()
         {

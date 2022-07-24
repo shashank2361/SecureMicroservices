@@ -65,14 +65,16 @@ namespace Movies.Client
             //    Scope = "movieAPI"
             //});
 
-
+ 
 
             services.AddAuthentication(options =>
                {
                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
                })
-               .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+               .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme , options => {
+                   options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Movies/AccessDenied");
+               })
                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                {
                    options.Authority = "https://localhost:5005";
@@ -82,15 +84,27 @@ namespace Movies.Client
                   // options.ResponseType = "code";
                     options.ResponseType = "code id_token";   // added for Hybrid Flow
 
-                   options.Scope.Add("openid");
-                   options.Scope.Add("profile");
+                   options.Scope.Add("openid");   // not mandatory its added by defailt
+                   options.Scope.Add("profile");  // not mandatory
                    options.Scope.Add("movieAPI");       // added for Hybrid Flow
+                   options.Scope.Add("email");       // added for Hybrid Flow
+                   options.Scope.Add("movieAPI");       // added for Hybrid Flow
+                   options.Scope.Add("roles");       // added for roles based authorization
+                   options.ClaimActions.MapUniqueJsonKey("role", "role");       // added for roles based authorization
                    
                    options.SaveTokens = true;
                    options.GetClaimsFromUserInfoEndpoint = true;
 
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       NameClaimType = JwtClaimTypes.GivenName,
+                       RoleClaimType = JwtClaimTypes.Role   // added for roles based authorization, If name and Role are not presesnt Identtiy server will give unauthorized message
+                   };
                    
                });
+
+     
+        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

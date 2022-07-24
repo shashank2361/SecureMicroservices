@@ -49,10 +49,10 @@ namespace IdentityServer
                        {
                            IdentityServerConstants.StandardScopes.OpenId,
                            IdentityServerConstants.StandardScopes.Profile,
-                          // IdentityServerConstants.StandardScopes.Address,
-                          // IdentityServerConstants.StandardScopes.Email,
+                            IdentityServerConstants.StandardScopes.Address,    // added so that we can access more inofrmation like address and email when used logins to openid connect 
+                           IdentityServerConstants.StandardScopes.Email,
                            "movieAPI",     // Added For Hybrid Flow
-                           //"roles"
+                           "roles"   // adding roles in test users for role base authorization  and here to ristrict access accordning to roles.
                        }
                    }
               };
@@ -74,12 +74,12 @@ namespace IdentityServer
           {
               new IdentityResources.OpenId(),
               new IdentityResources.Profile(),
-              //new IdentityResources.Address(),
-              //new IdentityResources.Email(),
-              //new IdentityResource(
-              //      "roles",
-              //      "Your role(s)",
-              //      new List<string>() { "role" })
+              new IdentityResources.Address(),  // added so that we can access more inofrmation like address and email when used logins to openid connect
+              new IdentityResources.Email(),
+              new IdentityResource(             // adding roles in test users and here to ristrict access accordning to roles.
+                    "roles",
+                    "Your role(s)",
+                    new List<string>() { "role" })
           };
 
         public static List<TestUser> TestUsers =>
