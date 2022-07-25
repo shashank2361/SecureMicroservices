@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.txt = Readme.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\ApiGateway.csproj", "{D0C42187-5B76-4B40-97EF-7E13D94AE91B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{0A834161-7141-4CF4-808D-897DBC22C2A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A834161-7141-4CF4-808D-897DBC22C2A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A834161-7141-4CF4-808D-897DBC22C2A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0C42187-5B76-4B40-97EF-7E13D94AE91B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0C42187-5B76-4B40-97EF-7E13D94AE91B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0C42187-5B76-4B40-97EF-7E13D94AE91B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0C42187-5B76-4B40-97EF-7E13D94AE91B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -79,7 +79,9 @@ namespace Movies.Client.ApiServices
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                "/api/movies");
+                //"/api/movies"
+                "/movies"  // because now I am using Identity Server
+                );
 
             var response = await httpClient.SendAsync(
                 request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
@@ -104,7 +106,7 @@ namespace Movies.Client.ApiServices
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/api/movies/{id}");
+                $"/movies/{id}");
 
             var response = await httpClient.SendAsync( request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
